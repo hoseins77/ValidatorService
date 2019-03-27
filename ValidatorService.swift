@@ -67,6 +67,7 @@ class ValidatorService {
         return self
     }
     
+    
     public func isValid() -> Bool{
         return valid
     }
