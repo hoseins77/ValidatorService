@@ -83,6 +83,16 @@ class ValidatorService {
         return self
     }
     
+    public func username() -> ValidatorService {
+        let usernameRegEx = "\\w{7,8}"
+        let usernameTest = NSPredicate(format:"SELF MATCHES %@" , RegEx)
+        if !usernameTest.evaluate(with: text) {
+            valid = false
+            error = .username
+        }
+        return self
+    }
+    
     public func isValid() -> Bool{
         return valid
     }
@@ -108,6 +118,7 @@ class ValidatorService {
         case numberal
         case email
         case validCharacter
+        case username
     }
 }
 
