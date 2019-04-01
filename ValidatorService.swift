@@ -12,6 +12,7 @@ class ValidatorService {
     
     var text: String
     private var valid: Bool = true
+    private var error: ValidatorError?
     
     init(text: String) {
         self.text = text
@@ -21,6 +22,7 @@ class ValidatorService {
         if isValid() {
             if text.isEmpty {
                 valid = false
+                error = .required
             }
         }
         return self
@@ -30,6 +32,7 @@ class ValidatorService {
         if isValid() {
             if text.count < count {
                 valid = false
+                error = .minLength
             }
         }
         return self
@@ -42,6 +45,7 @@ class ValidatorService {
             if chars.count >= 2 {
                 if chars[0] != "0" || chars[1] != "9" {
                     valid = false
+                    error = .mobile
                 }
             }
         }
@@ -54,6 +58,7 @@ class ValidatorService {
                 return self
             }
             valid = false
+            error = .numberal
         }
         return self
     }
@@ -63,10 +68,67 @@ class ValidatorService {
         let emailTest = NSPredicate(format:"SELF MATCHES %@", emailRegEx)
         if !emailTest.evaluate(with: text) {
             valid = false
+            error = .email
         }
         return self
     }
+    
+    public func validCharacter() -> ValidatorService {
+        
+        let characterset = CharacterSet(charactersIn: "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_!@.")
+        if text.rangeOfCharacter(from: characterset.inverted) != nil {
+            valid = false
+            error = .validCharacter
+        }
+        return self
+    }
+    
     public func isValid() -> Bool{
         return valid
     }
+    
+    public func setErrorHandler(onError: @escaping (_ error: ValidatorError) -> Void) -> ValidatorService{
+        if !valid {
+            onError(error!)
+        }
+        return self
+    }
+    
+    public func setOnValid(onValid: @escaping () -> Void) -> ValidatorService{
+        if valid {
+            onValid()
+        }
+        return self
+    }
+    
+    enum ValidatorError {
+        case required
+        case minLength
+        case mobile
+        case numberal
+        case email
+        case validCharacter
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
